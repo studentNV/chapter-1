@@ -15,15 +15,13 @@
 #### 1) Внутри директории /usr/share/man (хранилище встроенной документации) находятся каталоги, разбитые по секциям разделов помощи (man1, man2, man3) и по языкам (es, fr, ru).
 #### Используя команду ls, необходимо вывести на экран все файлы, которые расположены в секционных директориях /usr/share/man/manX и содержат слово "config" в имени.
 ```bash
-[sitis$localhost man]$ ls /usr/share/man/man* | grep config 
+[sitis$localhost man]$ ls -1  /usr/share/man/man?/*config*
 ```
-![image](https://user-images.githubusercontent.com/95025513/143767937-c319a6bc-992a-4f7a-b7b0-7d298938bd2e.png)
 
 #### Одним вызовом ls найти все файлы, содержащие слово "system" в каталогах /usr/share/man/man1 и /usr/share/man/man7
 ```bash
-[sitis$localhost man]$ ls /usr/share/man/man[1,7] | grep system 
+[sitis$localhost man]$ ls  /usr/share/man/man[1,7]/*system* 
 ```
-![image](https://user-images.githubusercontent.com/95025513/143767967-e3ff237e-ad3a-478a-b6c1-b50e75150aa7.png)
 
 #### 2) Самостоятельно изучить команду find, предназначенную для поиска файлов/папок по заданным условиям (man find, find --help).
 #### Найти в директории /usr/share/man все файлы, которые содержат слово "help" в имени, найти там же все файлы, имя которых начинается на "conf".
@@ -180,5 +178,3 @@ fi
 https://www.unix.com/man-page/posix/1posix/eval/
 
 ![image](https://user-images.githubusercontent.com/95025513/143767878-538fa5eb-2e45-41ea-9807-2e4f1eb58c2e.png)
-
-новое изменение.
