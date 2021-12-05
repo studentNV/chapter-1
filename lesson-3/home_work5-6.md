@@ -165,7 +165,7 @@ END{
 
 ### Sed
 #### 1. Change all browsers to "lynx"
-> Из-за того что распарсить данный файл не представляеться возможным так как в одной колонке "user-agent" может находиться несколько браузеров использую тупой перебор.
+> Использую тупой перебор.
 ```bash
 [sitis@localhost lesson3]$  sed -e 's/Amigo/lynx/; s/Safari/lynx/; s/Avant/lynx/; s/Chromium/lynx/; s/Privacy/lynx/; s/Chrome/lynx/; s/K-Meleon/lynx/; s/Maxthon/lynx/; s/Explorer/lynx/; s/Mozilla/lynx/; s/"SeaMonkey/lynx/; s/Opera/lynx/; s/Orca/lynx/; s/Moon/lynx/; s/QIP/lynx/; s/Moon/lynx/; s/QtWeb/lynx/; s/Vivaldi/lynx/; s/AppleWebKit/lynx/' access1.log
 ```
