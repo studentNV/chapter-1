@@ -65,8 +65,19 @@ awk -F "AppleWebKit" 'NF>0 { count += NF-1 } END { print 0+count }' access.log
 ```
 > Ответ Mozilla
 
+> После некоторого времени гугления я нашел решения в интернете и модефицировав хочу его показать, но как по мне оно далеко от идеала (в плане все решения которые янашел выводят браузер с версией и считают бразуер с другой версией как другой браузер, но это же тот же браузер ...)
+```bash
+[sitis@localhost lesson3]$  awk -F [\"\(] '{print $6}' access.log | sort | uniq -c | sort -fr
+```
+> Пример работы
+```bash
+[sitis@localhost lesson3]$  awk -F [\"\(] '{print $6}' access.log | sort | uniq -c | sort -f
+  17036 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36
+  42615 Mozilla/5.0 (Windows NT 6.1; Trident/7.0; rv:11.0) like Gecko
+ 340874 Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0)
+```
 #### 2. Show number of requests per month for ip 216.244.66.230 (for example: Sep 2016 - 100500 reqs, Oct 2016 - 0 reqs, Nov 2016 - 2 reqs...)
-> Не уверен что понял задание написано в месяц то есть в один или в каждый. Может я не понял но вроде вот так. 
+> Не уверен что понял задание, написано в месяц то есть в один или в каждый. Может я не понял но вроде вот так. 
 ```bash
 awk -F [/:] 'BEGIN {a=0} { if ($1~/216.244.66.230/ && $3~/2021/ &&  $2~/Dec/) a++} END{print $2 " " $3 " - " a " reqs"}' access.log
 ```
@@ -142,21 +153,8 @@ END{
     }
 }
 ```
-> Пример выполнения на небольшой часте файла
+> Пример выполнения на небольшой части файла
 ```bash
-191.102.166.217         capacity         20010143809
-172.90.18.189           capacity         404271
-177.36.159.34           capacity         20010467
-63.32.57.155            capacity         20010440
-34.215.26.49            capacity         20010440
-3.234.221.132           capacity         200555473
-170.83.179.107          capacity         2006529025
-40.94.33.12             capacity         404229
-129.20.233.138          capacity         20010480
-46.223.163.117          capacity         20077071873
-99.7.17.72              capacity         20020815093
-191.102.143.21          capacity         20010467
-199.47.87.140           capacity         200305
 185.136.116.142         capacity         20018957413
 192.71.23.211           capacity         200305
 46.167.202.170          capacity         20010467
@@ -169,17 +167,19 @@ END{
 ```bash
 [sitis@localhost lesson3]$  sed -e 's/Amigo/lynx/; s/Safari/lynx/; s/Avant/lynx/; s/Chromium/lynx/; s/Privacy/lynx/; s/Chrome/lynx/; s/K-Meleon/lynx/; s/Maxthon/lynx/; s/Explorer/lynx/; s/Mozilla/lynx/; s/"SeaMonkey/lynx/; s/Opera/lynx/; s/Orca/lynx/; s/Moon/lynx/; s/QIP/lynx/; s/Moon/lynx/; s/QtWeb/lynx/; s/Vivaldi/lynx/; s/AppleWebKit/lynx/' access1.log
 ```
-> Пример выполнения на небольшой часте файла
+> Пример выполнения на небольшой части файла
 ```bash
 [sitis@localhost lesson3]$  sed -e 's/Amigo/lynx/; s/Safari/lynx/; s/Avant/lynx/; s/Chromium/lynx/; s/Privacy/lynx/; s/Chrome/lynx/; s/K-Meleon/lynx/; s/Maxthon/lynx/; s/Explorer/lynx/; s/Mozilla/lynx/; s/"SeaMonkey/lynx/; s/Opera/lynx/; s/Orca/lynx/; s/Moon/lynx/; s/QIP/lynx/; s/Moon/lynx/; s/QtWeb/lynx/; s/Vivaldi/lynx/; s/AppleWebKit/lynx/' access1.log
 216.244.66.230 - - [19/Dec/2020:13:57:26 +0100] "GET /index.php?option=com_phocagallery&view=category&id=1:almhuette-raith&Itemid=53 HTTP/1.1" 200 32653 "-" "lynx/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)" "-"
-216.244.66.230 - - [19/Dec/2020:14:08:06 +0100] "GET /apache-log/access.log HTTP/1.1" 200 233 "-" "lynx/5.0 (Windows NT 6.3; Win64; x64) lynx/537.36 (KHTML, like Gecko) lynx/87.0.4280.88 lynx/537.36" "-"
-216.244.66.230 - - [19/Dec/2020:14:08:08 +0100] "GET /favicon.ico HTTP/1.1" 404 217 "http://www.almhuette-raith.at/apache-log/access.log" "lynx/5.0 (Windows NT 6.3; Win64; x64) lynx/537.36 (KHTML, like Gecko) lynx/87.0.4280.88 lynx/537.36" "-"
-216.244.66.230 - - [19/Dec/2020:14:14:26 +0100] "GET /robots.txt HTTP/1.1" 200 304 "-" "lynx/5.0 (compatible; DotBot/1.1; http://www.opensiteexplorer.org/dotbot, help@moz.com)" "-"
-216.244.66.230 - - [19/Dec/2020:14:16:44 +0100] "GET /index.php?option=com_phocagallery&view=category&id=2%3Awinterfotos&Itemid=53 HTTP/1.1" 200 30662 "-" "lynx/5.0 (compatible; AhrefsBot/7.0; +http://ahrefs.com/robot/)" "-"
-216.244.66.230 - - [19/Dec/2020:14:29:21 +0100] "GET /administrator/index.php HTTP/1.1" 200 4263 "" "lynx/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322)" "-"
-216.244.66.230 - - [19/Dec/2020:14:58:59 +0100] "GET /apache-log/access.log HTTP/1.1" 200 1299 "-" "lynx/5.0 (Windows NT 10.0; Win64; x64) lynx/537.36 (KHTML, like Gecko) lynx/87.0.4280.101 lynx/537.36" "-"
-73.166.162.225 - - [19/Dec/2020:14:58:59 +0100] "GET /favicon.ico HTTP/1.1" 404 217 "http://www.almhuette-raith.at/apache-log/access.log" "lynx/5.0 (Windows NT 10.0; Win64; x64) lynx/537.36 (KHTML, like Gecko) lynx/87.0.4280.101 lynx/537.36" "-"
+```
+> Такого ужастного способа я не выдержал и смог придумать только через регулярное выражение совершить замену
+```bash
+[sitis@localhost lesson3]$ sed 's|"[A-Z].[a-z]*/|lynx|' access.log
+```
+> Пример выполнения на небольшой части файла
+```bash
+95.52.42.202 - - [04/Dec/2021:13:53:55 +0100] "HEAD /apache-log/access.log HTTP/1.1" 200 0 "-" lynx1.14 (linux-gnu)" "-"
+95.52.42.202 - - [04/Dec/2021:13:54:20 +0100] "GET /apache-log/access.log HTTP/1.1" 200 131514477 "-" lynx1.14 (linux-gnu)" "-"
 ```
 
 #### 2. Masquerade all ip addresses. Rewrite file.
@@ -188,7 +188,7 @@ END{
 [sitis@localhost lesson3]$ sed -i 's/\([0-9]\{1,3\}[\.]\)\{3\}[0-9]\{1,3\}/*****/' access1.log
 ```
 
-> Пример выполнения на небольшой часте файла
+> Пример выполнения на небольшой части файла
 ```bash
 [sitis@localhost lesson3]$ cat access1.log
 ***** - - [19/Dec/2020:15:23:13 +0100] "GET /images/stories/raith/almhuette_raith.jpg HTTP/1.1" 200 43300 "http://www.almhuette-raith.at/" "Mozilla/5.0 (Linux; U; Android 8.1.0; zh-CN; EML-AL00 Build/HUAWEIEML-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.108 baidu.sogo.uc.UCBrowser/11.9.4.974 UWS/2.13.1.48 Mobile Safari/537.36 AliApp(DingTalk/4.5.11) com.alibaba.android.rimet/10487439 Channel/227200 language/zh-CN" "-"
