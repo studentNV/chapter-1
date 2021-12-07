@@ -71,12 +71,12 @@ touch ../$FILE 2>/dev/null && echo "File is created successfully" || echo "Permi
 [sitis@localhost scr]$ ./script
 File is created successfully
 ```
-> Пример работы скрипта при ошибке
+> Пример работы скрипта при ошибке (файл уже существует)
 ```bash
 [sitis@localhost scr]$ ./script
 The file already exists
 ```
-> Пример работы
+> Пример работы скрипта при ошибке (нет прав)
 ```bash
 [sitis@localhost ~]$ ./script
 Permission denied
