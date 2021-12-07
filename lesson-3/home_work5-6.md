@@ -210,10 +210,10 @@ BEGIN{FS=OFS=" |:"}
     {
         colliction[$1$10]
         colliction[$1$10]++
-        time[$5$6] = $5$6
+        finishTime[$5$6] = $5$6
         if (colliction[$1$10] == 1)
         {
-            buf[$5$6] = $5$6 
+            startTime[$5$6] = $5$6 
         }
     }
 }
@@ -221,11 +221,10 @@ BEGIN{FS=OFS=" |:"}
 {
     for(i in colliction)
     {
-        #print time[$5$6] " ==== " colliction[$1$10] " ==== " $1$10 " ==== " buf[$5$6]
-        if (colliction[i] > 50 && (time[$5$6]-buf[$5$6]<10))
+        if (colliction[i] > 5 && (finishTime[$5$6]-startTime[$5$6]<10))
         {
-            print "Error ====> " i " time begin " buf[$5$6] " time end " time[$5$6]
-            colliction[$1$10] = 0
+            print "Error ====> " i " begin tome = " startTime[$5$6] " finish time = " finishTime[$5$6]
+            colliction[i] = 0
         }
     }
 }
