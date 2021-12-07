@@ -201,24 +201,35 @@ END{
 
 ### Extra (*)
 Show list of unique ips, who made more then 50 requests to the same url within 10 minutes (for example too many requests to "/")
-> Сидел очень долго много вариантов перепробовал но победить время я не смог. Получилось только выводить ошибку когда уникальный ip-адресс стучиться на URL больше 50 раз.
+> Сидел очень долго много вариантов перепробовал но победить время я не смог. Получилось только выводить первый ip-адрес который постучался более 50 раз на один URL в промежутке 10 минут
 ```bash
+#!/usr/bin/awk -f
 BEGIN{FS=OFS=" |:"}
-{time[$5$6] }
 {
-!(($1$10) in colliction)
+    !(($1$10) in colliction)
+    {
+        colliction[$1$10]
+        colliction[$1$10]++
+        time[$5$6] = $5$6
+        if (colliction[$1$10] == 1)
+        {
+            buf[$5$6] = $5$6 
+        }
+    }
+}
+
 {
-    colliction[$1$10]
-    colliction[$1$10]++
+    for(i in colliction)
+    {
+        #print time[$5$6] " ==== " colliction[$1$10] " ==== " $1$10 " ==== " buf[$5$6]
+        if (colliction[i] > 5 && (time[$5$6]-buf[$5$6]<10))
+        {
+            textError = "Error ====> " i " time begin " buf[$5$6] " time end " time[$5$6]
+            break
+        }
     }
 }
 END{
-    for(i in colliction)
-    {
-        if (colliction[i] > 50)
-        {
-            print "Error ====> " i
-        }
-    }
+    print textError
 }
 ```
