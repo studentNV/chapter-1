@@ -199,3 +199,26 @@ END{
 
 Место для задачки под `*` если справлюсь
 
+### Extra (*)
+Show list of unique ips, who made more then 50 requests to the same url within 10 minutes (for example too many requests to "/")
+> Сидел очень долго много вариантов перепробовал но победить время я не смог. Получилось только выводить ошибку когда уникальный ip-адресс стучиться на URL больше 50 раз.
+```bash
+BEGIN{FS=OFS=" |:"}
+{time[$5$6] }
+{
+!(($1$10) in colliction)
+{
+    colliction[$1$10]
+    colliction[$1$10]++
+    }
+}
+END{
+    for(i in colliction)
+    {
+        if (colliction[i] > 50)
+        {
+            print "Error ====> " i
+        }
+    }
+}
+```
