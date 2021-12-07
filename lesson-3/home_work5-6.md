@@ -221,7 +221,7 @@ BEGIN{FS=OFS=" |:"}
 {
     for(i in colliction)
     {
-        if (colliction[i] > 5 && (finishTime[$5$6]-startTime[$5$6]<10))
+        if (colliction[i] > 50 && (finishTime[$5$6]-startTime[$5$6]<10))
         {
             print "Error ====> " i " begin tome = " startTime[$5$6] " finish time = " finishTime[$5$6]
             colliction[i] = 0
