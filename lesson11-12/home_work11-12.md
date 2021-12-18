@@ -118,6 +118,10 @@ Host hw6
 ```
 
 #### 1.9 (*) Open webserver webpage in browser of your Host machine of VirtualBox (Windows, or Mac, or whatever else you use). You may need to setup port forwarding in settings of VirtualBox.
+> I didn't really understand from which host I needed to open it, but I made 2 options.
+![image](https://user-images.githubusercontent.com/95025513/146650028-0ed4b3e0-5706-4dec-b1d0-133422b4c346.png)
+
+![image](https://user-images.githubusercontent.com/95025513/146650009-e5794628-b2af-4381-a0d3-2b4dd82ee796.png)
 
 
 ### Task 2:
