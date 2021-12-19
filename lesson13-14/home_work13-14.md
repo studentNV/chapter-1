@@ -411,8 +411,17 @@ total 16
 total 16
       64 dr-xr-xr-x.  17 root root  224 Nov 25 19:08 .
       64 dr-xr-xr-x.  17 root root  224 Nov 25 19:08 ..
+[sitis@localhost lesson7]$ df -Th
+Filesystem              Type      Size  Used Avail Use% Mounted on
+devtmpfs                devtmpfs  908M     0  908M   0% /dev
+tmpfs                   tmpfs     919M     0  919M   0% /dev/shm
+tmpfs                   tmpfs     919M  8.6M  911M   1% /run
+tmpfs                   tmpfs     919M     0  919M   0% /sys/fs/cgroup
+/dev/mapper/centos-root xfs       6.2G  2.0G  4.3G  33% /
+/dev/sda1               xfs      1014M  194M  821M  20% /boot
+tmpfs                   tmpfs     184M     0  184M   0% /run/user/1000
 ```
-> Since this is the same file with different names based on the definition of links. Boot also contains files to boot the system.
+> Since they are on different filesystems.
 
 #### 4. Check the root directory space usage by du command. Compare it with an information from df. If you find differences, try to find out why it happens.
 ```bash
