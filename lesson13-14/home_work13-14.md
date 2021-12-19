@@ -401,7 +401,33 @@ total 16
       64 dr-xr-xr-x.  17 root root  224 Nov 25 19:08 .
       64 dr-xr-xr-x.  17 root root  224 Nov 25 19:08 ..
 ```
-> Because it is referenced 17 times. There are no more thoughts on the Internet, I did not find anything like this.
+> Each directory inside adds a link when created.
+```console
+[sitis@localhost lesson7]$ ls -la /
+total 16
+dr-xr-xr-x.  17 root root  224 Nov 25 19:08 .                           1
+dr-xr-xr-x.  17 root root  224 Nov 25 19:08 ..                          2
+lrwxrwxrwx.   1 root root    7 Nov 25 19:05 bin -> usr/bin
+dr-xr-xr-x.   5 root root 4096 Dec  4 21:11 boot                        3
+drwxr-xr-x.  20 root root 3080 Dec 19 10:05 dev                         4
+drwxr-xr-x.  74 root root 8192 Dec 19 14:58 etc                         5
+drwxr-xr-x.   4 root root   30 Dec  2 21:16 home                        6
+lrwxrwxrwx.   1 root root    7 Nov 25 19:05 lib -> usr/lib
+lrwxrwxrwx.   1 root root    9 Nov 25 19:05 lib64 -> usr/lib64
+drwxr-xr-x.   2 root root    6 Apr 11  2018 media                       7
+drwxr-xr-x.   2 root root    6 Apr 11  2018 mnt                         8
+drwxr-xr-x.   2 root root   19 Dec 11 02:06 opt                         9
+dr-xr-xr-x. 107 root root    0 Dec 19 10:05 proc                        10
+dr-xr-x---.   5 root root  225 Dec 19 14:03 root                        11
+drwxr-xr-x.  23 root root  700 Dec 19 15:34 run                         12
+lrwxrwxrwx.   1 root root    8 Nov 25 19:05 sbin -> usr/sbin
+drwxr-xr-x.   2 root root    6 Apr 11  2018 srv                         13
+dr-xr-xr-x.  13 root root    0 Dec 19 10:05 sys                         14
+drwxrwxrwt.   9 root root  183 Dec 19 15:34 tmp                         15
+drwxr-xr-x.  13 root root  155 Nov 25 19:05 usr                         16
+drwxr-xr-x.  19 root root  267 Nov 25 19:11 var                         17
+
+```
 
 #### 3. Check what inode numbers have "/" and "/boot" directory. Why?
 ```bash
