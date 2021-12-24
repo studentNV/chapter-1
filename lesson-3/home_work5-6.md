@@ -29,7 +29,6 @@ Count = 340874 most frequent browser: Mozilla/4.0 (compatible; MSIE 7.0; Windows
 ```
 
 #### 2. Show number of requests per month for ip 216.244.66.230 (for example: Sep 2016 - 100500 reqs, Oct 2016 - 0 reqs, Nov 2016 - 2 reqs...)
-> Если необходимо вывести все месяца
 ```bash
 #!/usr/bin/awk -f
 BEGIN {FS="/"}
@@ -62,7 +61,6 @@ END{
 ```
 
 #### 3. Show total amount of data which server has provided for each unique ip (i.e. 100500 bytes for 1.2.3.4; 9001 bytes for 5.4.3.2 and so on)
-> Поменял местами выводимый адрес и объем что бы выводилось аккуратнее. Так как запускал cкрипт на вертуалке на большом файле у меня он очень долго выполняет операцию (засекал примерно 2 минуты).
 ```bash
 #!/usr/bin/awk -f
 {
@@ -91,7 +89,6 @@ END{
 
 ### Sed
 #### 1. Change all browsers to "lynx"
-> Такого ужастного способа я не выдержал и смог придумать только через регулярное выражение совершить замену
 ```bash
 [sitis@localhost lesson3]$ sed 's|"[A-Z].[a-z].[^"]*"|lynx|' access.log
 [sitis@localhost ~]$ sed 's|"[A-Z].[a-z].[^"]*"|lynx|' access.log
