@@ -5,7 +5,6 @@
 #### 1. add secondary ip address to you second network interface enp0s8. Each point must be presented with commands and showing that new address was applied to the interface. To repeat adding address for points 2 and 3 address must be deleted (please add deleting address to you homework log) Methods:
 ##### a. using ip utility (stateless)
 ```bash
-[sitis@localhost ~]$ ip -4 a
 [sit2@localhost ~]$ ip -4 a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
     inet 127.0.0.1/8 scope host lo
@@ -28,6 +27,33 @@
     inet 192.168.56.103/24 brd 192.168.56.255 scope global noprefixroute dynamic enp0s8
        valid_lft 571sec preferred_lft 571sec
     inet 192.168.56.104/24 scope global secondary enp0s8
+       valid_lft forever preferred_lft forever
+```
+
+> Deleted
+```bash
+[sit2@localhost ~]$ ip -4 a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global noprefixroute dynamic enp0s3
+       valid_lft 86344sec preferred_lft 86344sec
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    inet 192.168.56.103/24 brd 192.168.56.255 scope global noprefixroute enp0s8
+       valid_lft forever preferred_lft forever
+    inet 192.168.56.104/24 scope global secondary enp0s8
+       valid_lft forever preferred_lft forever
+[sit2@localhost ~]$ sudo systemctl restart network
+[sit2@localhost ~]$ ip -4 a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+2: enp0s3: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    inet 10.0.2.15/24 brd 10.0.2.255 scope global noprefixroute dynamic enp0s3
+       valid_lft 86395sec preferred_lft 86395sec
+3: enp0s8: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    inet 192.168.56.103/24 brd 192.168.56.255 scope global noprefixroute enp0s8
        valid_lft forever preferred_lft forever
 ```
 
@@ -69,8 +95,8 @@ RTNETLINK answers: File exists
        valid_lft forever preferred_lft forever
 [sit2@localhost ~]$ systemctl restart network
 ```
-> Deleted
 
+> Deleted
 ```bash
 [sit2@localhost ~]$ ip -4 a
 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
