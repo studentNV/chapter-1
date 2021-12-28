@@ -109,35 +109,3 @@ END{
 ***** - - [19/Dec/2020:15:23:13 +0100] "GET /images/stories/raith/almhuette_raith.jpg HTTP/1.1" 200 43300 "http://www.almhuette-raith.at/" "Mozilla/5.0 (Linux; U; Android 8.1.0; zh-CN; EML-AL00 Build/HUAWEIEML-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.108 baidu.sogo.uc.UCBrowser/11.9.4.974 UWS/2.13.1.48 Mobile Safari/537.36 AliApp(DingTalk/4.5.11) com.alibaba.android.rimet/10487439 Channel/227200 language/zh-CN" "-"
 ***** - - [19/Dec/2020:15:23:13 +0100] "GET /images/stories/raith/grillplatz.jpg HTTP/1.1" 200 55303 "http://www.almhuette-raith.at/" "Mozilla/5.0 (Linux; U; Android 8.1.0; zh-CN; EML-AL00 Build/HUAWEIEML-AL00) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.108 baidu.sogo.uc.UCBrowser/11.9.4.974 UWS/2.13.1.48 Mobile Safari/537.36 AliApp(DingTalk/4.5.11) com.alibaba.android.rimet/10487439 Channel/227200 language/zh-CN" "-"
 ```
-
-
-### Extra (*)
-Show list of unique ips, who made more then 50 requests to the same url within 10 minutes (for example too many requests to "/")
-> Сидел очень долго много вариантов перепробовал. не думаю что работает идеально.
-```bash
-#!/usr/bin/awk -f
-BEGIN{FS=OFS=" |:"}
-{
-    !(($1$10) in colliction)
-    {
-        colliction[$1$10]
-        colliction[$1$10]++
-        finishTime[$5$6] = $5$6
-        if (colliction[$1$10] == 1)
-        {
-            startTime[$5$6] = $5$6 
-        }
-    }
-}
-
-{
-    for(i in colliction)
-    {
-        if (colliction[i] > 50 && (finishTime[$5$6]-startTime[$5$6]<10))
-        {
-            print "Error ====> " i " begin time = " startTime[$5$6] " finish time = " finishTime[$5$6]
-            colliction[i] = 0
-        }
-    }
-}
-```
