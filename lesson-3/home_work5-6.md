@@ -90,7 +90,6 @@ END{
 ### Sed
 #### 1. Change all browsers to "lynx"
 ```bash
-[sitis@localhost lesson3]$ sed 's|"[A-Z].[a-z].[^"]*"|lynx|' access.log
 [sitis@localhost ~]$ sed 's|"[A-Z].[a-z].[^"]*"|lynx|' access.log
 193.106.31.130 - - [21/Jan/2021:02:17:44 +0100] "POST /administrator/index.php HTTP/1.0" 200 4481 "-" lynx "-"
 193.106.31.130 - - [21/Jan/2021:02:17:44 +0100] "POST /administrator/index.php HTTP/1.0" 200 4481 "-" lynx "-"
