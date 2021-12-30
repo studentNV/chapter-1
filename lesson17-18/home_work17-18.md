@@ -235,7 +235,7 @@ tcpdump: listening on enp0s8, link-type EN10MB (Ethernet), capture size 262144 b
 #### 4. run tcpdump and request any http site in separate session. Find HTTP request and answer packets with ASCII data in it.  Tcpdump command must be as strict as possible to capture only needed packages for this http request.
 > Enother screen `curl http://nginx.org/`
 ```bash
-[sit2@localhost ~]$ sudo tcpdump -nn -A "(port 80 and host 10.0.2.15)"
+[sit2@localhost ~]$ sudo tcpdump -A -i enp0s3 "src 10.0.2.15 and ip proto \tcp"
 tcpdump: verbose output suppressed, use -v or -vv for full protocol decode
 listening on enp0s3, link-type EN10MB (Ethernet), capture size 262144 bytes
 10:53:03.573867 IP 10.0.2.15.50424 > 3.125.197.172.80: Flags [S], seq 3099794766, win 29200, options [mss 1460,sackOK,TS val 835598 ecr 0,nop,wscale 7], length 0
