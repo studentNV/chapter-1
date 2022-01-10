@@ -154,6 +154,8 @@ success
 [root@localhost ~]# firewall-cmd --zone=internal --change-interface=enp0s8 --permanent
 The interface is under control of NetworkManager, setting zone to 'home'.
 success
+[root@localhost ~]# firewall-cmd --reload
+success
 [root@localhost ~]# firewall-cmd --list-all-zones
 block
   target: %%REJECT%%
