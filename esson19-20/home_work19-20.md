@@ -106,6 +106,7 @@ Disabled
 ### Firewalls
 
 #### 1. Add rule using firewall-cmd that will allow SSH access to your server *only* from network 192.168.56.0/24 and interface enp0s8 (if your network and/on interface name differs - change it accordingly).
+> It seems to me that this is not the right solution, but below there is a more similar one to the correct one.
 ```bash
 [root@localhost ~]# systemctl status firewalld
 [root@localhost ~]# firewall-cmd --list-all
@@ -142,7 +143,154 @@ public (active)
   icmp-blocks:
   rich rules:
 ```
+> I wasted a lot of time, but this attempt looks better than before. If this is not the right solution, please give me advice and more specifically, because no matter how much I try, this is the best I could do.
+```bash
+[root@localhost ~]# sudo firewall-cmd --state
+running
+[root@localhost ~]# firewall-cmd --zone=public --permanent --remove-service=ssh
+success
+[root@localhost ~]# firewall-cmd --zone=internal --add-source=192.168.56.0/24 --permanent
+success
+[root@localhost ~]# firewall-cmd --zone=internal --change-interface=enp0s8 --permanent
+The interface is under control of NetworkManager, setting zone to 'home'.
+success
+[root@localhost ~]# firewall-cmd --list-all-zones
+block
+  target: %%REJECT%%
+  icmp-block-inversion: no
+  interfaces:
+  sources:
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
 
+
+dmz
+  target: default
+  icmp-block-inversion: no
+  interfaces:
+  sources:
+  services: ssh
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+
+
+drop
+  target: DROP
+  icmp-block-inversion: no
+  interfaces:
+  sources:
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+
+
+external
+  target: default
+  icmp-block-inversion: no
+  interfaces:
+  sources:
+  services: ssh
+  ports:
+  protocols:
+  masquerade: yes
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+
+
+home
+  target: default
+  icmp-block-inversion: no
+  interfaces:
+  sources:
+  services: dhcpv6-client mdns samba-client ssh
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+
+
+internal (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s8
+  sources: 192.168.56.0/24
+  services: dhcpv6-client mdns samba-client ssh
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+
+
+public (active)
+  target: default
+  icmp-block-inversion: no
+  interfaces: enp0s3
+  sources:
+  services: dhcpv6-client
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+
+
+trusted
+  target: ACCEPT
+  icmp-block-inversion: no
+  interfaces:
+  sources:
+  services:
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+
+
+work
+  target: default
+  icmp-block-inversion: no
+  interfaces:
+  sources:
+  services: dhcpv6-client ssh
+  ports:
+  protocols:
+  masquerade: no
+  forward-ports:
+  source-ports:
+  icmp-blocks:
+  rich rules:
+[root@localhost ~]# firewall-cmd --reload
+success
+```
 #### 2. Shutdown firewalld and add the same rules via iptables.
 ```bash
 [root@localhost ~]# systemctl stop firewalld
