@@ -156,82 +156,7 @@ The interface is under control of NetworkManager, setting zone to 'home'.
 success
 [root@localhost ~]# firewall-cmd --reload
 success
-[root@localhost ~]# firewall-cmd --list-all-zones
-block
-  target: %%REJECT%%
-  icmp-block-inversion: no
-  interfaces:
-  sources:
-  services:
-  ports:
-  protocols:
-  masquerade: no
-  forward-ports:
-  source-ports:
-  icmp-blocks:
-  rich rules:
-
-
-dmz
-  target: default
-  icmp-block-inversion: no
-  interfaces:
-  sources:
-  services: ssh
-  ports:
-  protocols:
-  masquerade: no
-  forward-ports:
-  source-ports:
-  icmp-blocks:
-  rich rules:
-
-
-drop
-  target: DROP
-  icmp-block-inversion: no
-  interfaces:
-  sources:
-  services:
-  ports:
-  protocols:
-  masquerade: no
-  forward-ports:
-  source-ports:
-  icmp-blocks:
-  rich rules:
-
-
-external
-  target: default
-  icmp-block-inversion: no
-  interfaces:
-  sources:
-  services: ssh
-  ports:
-  protocols:
-  masquerade: yes
-  forward-ports:
-  source-ports:
-  icmp-blocks:
-  rich rules:
-
-
-home
-  target: default
-  icmp-block-inversion: no
-  interfaces:
-  sources:
-  services: dhcpv6-client mdns samba-client ssh
-  ports:
-  protocols:
-  masquerade: no
-  forward-ports:
-  source-ports:
-  icmp-blocks:
-  rich rules:
-
-
+[root@localhost ~]#firewall-cmd --list-all --zone=internal
 internal (active)
   target: default
   icmp-block-inversion: no
@@ -245,8 +170,7 @@ internal (active)
   source-ports:
   icmp-blocks:
   rich rules:
-
-
+[root@localhost ~]#firewall-cmd --list-all --zone=public
 public (active)
   target: default
   icmp-block-inversion: no
@@ -260,87 +184,56 @@ public (active)
   source-ports:
   icmp-blocks:
   rich rules:
-
-
-trusted
-  target: ACCEPT
-  icmp-block-inversion: no
-  interfaces:
-  sources:
-  services:
-  ports:
-  protocols:
-  masquerade: no
-  forward-ports:
-  source-ports:
-  icmp-blocks:
-  rich rules:
-
-
-work
-  target: default
-  icmp-block-inversion: no
-  interfaces:
-  sources:
-  services: dhcpv6-client ssh
-  ports:
-  protocols:
-  masquerade: no
-  forward-ports:
-  source-ports:
-  icmp-blocks:
-  rich rules:
-[root@localhost ~]# firewall-cmd --reload
-success
 ```
 #### 2. Shutdown firewalld and add the same rules via iptables.
 ```bash
 [root@localhost ~]# systemctl stop firewalld
-[root@localhost ~]# yum -y install iptables-services
+[root@localhost ~]# sudo firewall-cmd --state
+not running
 [root@localhost ~]# systemctl start iptables
 [root@localhost ~]# systemctl status iptables
 ● iptables.service - IPv4 firewall with iptables
    Loaded: loaded (/usr/lib/systemd/system/iptables.service; disabled; vendor preset: disabled)
-   Active: active (exited) since Thu 2021-12-30 15:11:03 EST; 2s ago
-  Process: 2144 ExecStart=/usr/libexec/iptables/iptables.init start (code=exited, status=0/SUCCESS)
- Main PID: 2144 (code=exited, status=0/SUCCESS)
+   Active: active (exited) since Tue 2022-01-11 12:19:02 EST; 3s ago
+  Process: 1854 ExecStart=/usr/libexec/iptables/iptables.init start (code=exited, status=0/SUCCESS)
+ Main PID: 1854 (code=exited, status=0/SUCCESS)
 
-Dec 30 15:11:03 localhost.localdomain systemd[1]: Starting IPv4 firewall with iptables...
-Dec 30 15:11:03 localhost.localdomain iptables.init[2144]: iptables: Applying firewall rules: [  OK  ]
-Dec 30 15:11:03 localhost.localdomain systemd[1]: Started IPv4 firewall with iptables.
+Jan 11 12:19:02 localhost.localdomain systemd[1]: Starting IPv4 firewall with iptables...
+Jan 11 12:19:02 localhost.localdomain iptables.init[1854]: iptables: Applying firewall rules: [  OK  ]
+Jan 11 12:19:02 localhost.localdomain systemd[1]: Started IPv4 firewall with iptables.
 [root@localhost ~]# iptables -vnL
 Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
  pkts bytes target     prot opt in     out     source               destination
-  114  8144 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
+   10   704 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
     0     0 ACCEPT     icmp --  *      *       0.0.0.0/0            0.0.0.0/0
     0     0 ACCEPT     all  --  lo     *       0.0.0.0/0            0.0.0.0/0
     0     0 ACCEPT     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            state NEW tcp dpt:22
-  334 97194 REJECT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            reject-with icmp-host-prohibited
+   22  6402 REJECT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            reject-with icmp-host-prohibited
 
 Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
  pkts bytes target     prot opt in     out     source               destination
     0     0 REJECT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            reject-with icmp-host-prohibited
 
-Chain OUTPUT (policy ACCEPT 70 packets, 8248 bytes)
+Chain OUTPUT (policy ACCEPT 6 packets, 1328 bytes)
  pkts bytes target     prot opt in     out     source               destination
-[root@localhost ~]# vi /etc/sysconfig/iptables
--A INPUT -i enp0s8 -p tcp -s 192.168.56.0/24 -m tcp --dport 22 -j ACCEPT
-[root@localhost ~]# iptables-restore  < /etc/sysconfig/iptables
-[root@localhost ~]# iptables -vnL
-Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
+[root@localhost ~]# sudo iptables -P INPUT DROP
+[root@localhost ~]# sudo iptables -A INPUT -i enp0s8 -s 192.168.0.0/24 -j ACCEPT
+[root@localhost ~]# iptables -L -n -v
+Chain INPUT (policy DROP 0 packets, 0 bytes)
  pkts bytes target     prot opt in     out     source               destination
-    5   360 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
+   25  1812 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
     0     0 ACCEPT     icmp --  *      *       0.0.0.0/0            0.0.0.0/0
     0     0 ACCEPT     all  --  lo     *       0.0.0.0/0            0.0.0.0/0
     0     0 ACCEPT     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            state NEW tcp dpt:22
-    0     0 ACCEPT     tcp  --  enp0s8 *       192.168.56.0/24      0.0.0.0/0            tcp dpt:22
-   21  6111 REJECT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            reject-with icmp-host-prohibited
+   50 14550 REJECT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            reject-with icmp-host-prohibited
+    0     0 ACCEPT     all  --  enp0s8 *       192.168.0.0/24       0.0.0.0/0
 
 Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
  pkts bytes target     prot opt in     out     source               destination
     0     0 REJECT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            reject-with icmp-host-prohibited
 
-Chain OUTPUT (policy ACCEPT 4 packets, 384 bytes)
+Chain OUTPUT (policy ACCEPT 3 packets, 320 bytes)
  pkts bytes target     prot opt in     out     source               destination
-[root@localhost ~]#
+[root@localhost ~]# /sbin/service iptables save
+iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
 ```
