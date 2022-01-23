@@ -979,14 +979,136 @@ public (active)
 > На первом и втором Web-интерфейсе можно наблюдать наш второй ПК `vm2-worker`.
 ## 29. настройка управление запуском при помощи `systemd`.
 #### Настроить управление запуском каждого компонента `Hadoop` при помощи `systemd` (используя юниты-сервисы).
+##### Начнем с «namenode» на `vm1-headnode` создаем файл в `/etc/systemd/system/` и прописываем следующие строчки.
+```bash
+[Unit]
+Description=Hadoop DFS namenode and datanode
 
+[Service]
+User=hdfs
+Group=hadoop
+Type=forking
+ExecStart=/usr/local/hadoop/current/hadoop-3.1.2/sbin/hadoop-daemon.sh start namenode
+ExecStop=/usr/local/hadoop/current/hadoop-3.1.2/sbin/hadoop-daemon.sh stop namenode
+WorkingDirectory=/usr/local/hadoop/current
 
+[Install]
+WantedBy=multi-user.target
+```
+#### Далее создаем файл для `resourcemanager` в той же директории на `vm1-headnode`.
+```bash
+[Unit]
+Description=Hadoop DFS namenode and datanode
 
+[Service]
+User=yarn
+Group=hadoop
+Type=forking
+ExecStart=/usr/local/hadoop/current/hadoop-3.1.2/sbin/yarn-daemon.sh start resourcemanager
+ExecStop=/usr/local/hadoop/current/hadoop-3.1.2/sbin/yarn-daemon.sh stop resourcemanager
+WorkingDirectory=/usr/local/hadoop/current
 
+[Install]
+WantedBy=multi-user.target
+```
+#### Далее перезагружаем `systemctl daemon` и после саму систему.
+```bash
+[exam@vm1-headnode ~]$ sudo systemctl daemon-reload
+[exam@vm1-headnode ~]$ sudo reboot
+```
+#### Теперь запускаем наши компоненты и проверяем их статусы.
+```bash
+[exam@vm1-headnode ~]$ sudo systemctl start namenode
+[exam@vm1-headnode ~]$ sudo systemctl start resourcemanager
+[exam@vm1-headnode ~]$ sudo systemctl status namenode
+● namenode.service - Hadoop DFS namenode and datanode
+   Loaded: loaded (/etc/systemd/system/namenode.service; disabled; vendor preset: disabled)
+   Active: active (running) since Mon 2022-01-17 19:51:52 MSK; 7min ago
+ Main PID: 1703 (java)
+   CGroup: /system.slice/namenode.service
+           └─1703 /usr/lib/jvm/jre-1.8.0-openjdk/bin/java -Dproc_namenode -Djava.net.preferIPv4Stack=true -Dhdfs.audit.logger=INFO,NullAppender -Dhadoop.security.logger=INFO,RFAS -Dyarn.log.dir=/usr/local/hadoop/current/hadoop-3.1.2/l...
 
+Jan 17 19:51:50 vm1-headnode systemd[1]: Starting Hadoop DFS namenode and datanode...
+Jan 17 19:51:50 vm1-headnode hadoop-daemon.sh[1641]: WARNING: Use of this script to start HDFS daemons is deprecated.
+Jan 17 19:51:50 vm1-headnode hadoop-daemon.sh[1641]: WARNING: Attempting to execute replacement "hdfs --daemon start" instead.
+Jan 17 19:51:52 vm1-headnode systemd[1]: Started Hadoop DFS namenode and datanode.
+[exam@vm1-headnode ~]$ sudo systemctl status resourcemanager
+● resourcemanager.service - Hadoop DFS namenode and datanode
+   Loaded: loaded (/etc/systemd/system/resourcemanager.service; disabled; vendor preset: disabled)
+   Active: active (running) since Mon 2022-01-17 19:56:25 MSK; 2min 39s ago
+  Process: 2122 ExecStop=/usr/local/hadoop/current/hadoop-3.1.2/sbin/yarn-daemon.sh stop resourcemanager (code=exited, status=0/SUCCESS)
+  Process: 2194 ExecStart=/usr/local/hadoop/current/hadoop-3.1.2/sbin/yarn-daemon.sh start resourcemanager (code=exited, status=0/SUCCESS)
+ Main PID: 2256 (java)
+   CGroup: /system.slice/resourcemanager.service
+           └─2256 /usr/lib/jvm/jre-1.8.0-openjdk/bin/java -Dproc_resourcemanager -Djava.net.preferIPv4Stack=true -Dservice.libdir=/usr/local/hadoop/current/hadoop-3.1.2/share/hadoop/yarn,/usr/local/hadoop/current/hadoop-3.1.2/share/ha...
 
+Jan 17 19:56:23 vm1-headnode systemd[1]: Starting Hadoop DFS namenode and datanode...
+Jan 17 19:56:23 vm1-headnode yarn-daemon.sh[2194]: WARNING: Use of this script to start YARN daemons is deprecated.
+Jan 17 19:56:23 vm1-headnode yarn-daemon.sh[2194]: WARNING: Attempting to execute replace
+```
+#### Приступим к `vm2-worker` и к компоненту `datanode` так же создаем файл в директории `/etc/systemd/system/` и прописываем следующие строчки.
+```bash
+[Unit]
+Description=Hadoop DFS namenode and datanode
 
+[Service]
+User=hdfs
+Group=hadoop
+Type=forking
+ExecStart=/usr/local/hadoop/current/hadoop-3.1.2/sbin/hadoop-daemon.sh start datanode
+ExecStop=/usr/local/hadoop/current/hadoop-3.1.2/sbin/hadoop-daemon.sh stop datanode
+WorkingDirectory=/usr/local/hadoop/current
 
+[Install]
+WantedBy=multi-user.target
+```
+#### Теперь для `nodemanager` так же создаем файл и прописываем следующее.
+```bash
+[Unit]
+Description=Hadoop DFS namenode and datanode
 
+[Service]
+User=yarn
+Group=hadoop
+Type=forking
+ExecStart=/usr/local/hadoop/current/hadoop-3.1.2/sbin/yarn-daemon.sh start nodemanager
+ExecStop=/usr/local/hadoop/current/hadoop-3.1.2/sbin/yarn-daemon.sh stop nodemanager
+WorkingDirectory=/usr/local/hadoop/current
 
+[Install]
+WantedBy=multi-user.target
+```
+#### Теперь перезагружаем `systemctl daemon` запускаем наши компоненты и проверяем их статусы.
+```bash
+[exam@vm2-worker ~]$ sudo systemctl start datanode
+[exam@vm2-worker ~]$ sudo systemctl start nodemanager
+[exam@vm2-worker ~]$ sudo systemctl status datanode
+● datanode.service - Hadoop DFS namenode and datanode
+   Loaded: loaded (/etc/systemd/system/datanode.service; disabled; vendor preset: disabled)
+   Active: active (running) since Mon 2022-01-17 20:01:46 MSK; 4s ago
+  Process: 3048 ExecStop=/usr/local/hadoop/current/hadoop-3.1.2/sbin/hadoop-daemon.sh stop datanode (code=exited, status=0/SUCCESS)
+  Process: 3143 ExecStart=/usr/local/hadoop/current/hadoop-3.1.2/sbin/hadoop-daemon.sh start datanode (code=exited, status=0/SUCCESS)
+ Main PID: 3205 (java)
+   CGroup: /system.slice/datanode.service
+           └─3205 /usr/lib/jvm/jre-1.8.0-openjdk/bin/java -Dproc_datanode -Djava.net.preferIPv4Stack=true -Dhadoop.security.logger=ERROR,RFAS -Dyarn.log.dir=/usr/local/hadoop/current/hadoop-3.1.2/logs -Dyarn.log.file=hadoop-hdfs-datan...
 
+Jan 17 20:01:44 vm2-worker systemd[1]: Starting Hadoop DFS namenode and datanode...
+Jan 17 20:01:44 vm2-worker hadoop-daemon.sh[3143]: WARNING: Use of this script to start HDFS daemons is deprecated.
+Jan 17 20:01:44 vm2-worker hadoop-daemon.sh[3143]: WARNING: Attempting to execute replacement "hdfs --daemon start" instead.
+Jan 17 20:01:46 vm2-worker systemd[1]: Started Hadoop DFS namenode and datanode.
+[exam@vm2-worker ~]$ sudo systemctl status nodemanager
+● nodemanager.service - Hadoop DFS namenode and datanode
+   Loaded: loaded (/etc/systemd/system/nodemanager.service; disabled; vendor preset: disabled)
+   Active: active (running) since Mon 2022-01-17 19:55:42 MSK; 6min ago
+  Process: 2616 ExecStop=/usr/local/hadoop/current/hadoop-3.1.2/sbin/yarn-daemon.sh stop nodemanager (code=exited, status=0/SUCCESS)
+  Process: 2830 ExecStart=/usr/local/hadoop/current/hadoop-3.1.2/sbin/yarn-daemon.sh start nodemanager (code=exited, status=0/SUCCESS)
+ Main PID: 2893 (java)
+   CGroup: /system.slice/nodemanager.service
+           └─2893 /usr/lib/jvm/jre-1.8.0-openjdk/bin/java -Dproc_nodemanager -Djava.net.preferIPv4Stack=true -Dyarn.log.dir=/usr/local/hadoop/current/hadoop-3.1.2/logs -Dyarn.log.file=hadoop-yarn-nodemanager-vm2-worker.log -Dyarn.home...
+
+Jan 17 19:55:40 vm2-worker systemd[1]: Starting Hadoop DFS namenode and datanode...
+Jan 17 19:55:40 vm2-worker yarn-daemon.sh[2830]: WARNING: Use of this script to start YARN daemons is deprecated.
+Jan 17 19:55:40 vm2-worker yarn-daemon.sh[2830]: WARNING: Attempting to execute replacement "yarn --daemon start" instead.
+Jan 17 19:55:42 vm2-worker systemd[1]: Started Hadoop DFS namenode and datanode.
+```
+#### Всё работает.
