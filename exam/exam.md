@@ -488,17 +488,27 @@ sdc                         8:32   0     5G  0 disk
   └─vol_grp2-logical_vol2 253:4    0     5G  0 lvm  /opt/mount2
 sr0                        11:0    1  1024M  0 rom
 ```
-> После всех манипуляций наши системы смонтированных корректно, но после перезагрузки изменения пропадут давайте исправим это. Для этого в файл `/etc/fstab` добавляем следующие две строчки.
+> После всех манипуляций наши системы смонтированных корректно, но после перезагрузки изменения пропадут давайте исправим это. Для этого в файл `/etc/fstab` добавляем следующие 2 строчки. Но перед этим посмотрим на их `UUI` что бы при удалении дисков не приходилось каждый раз править этот файл.
 ```bash
-/dev/vol_grp1/logical_vol1      /opt/mount1     ext4    defaults        0 0
-/dev/vol_grp2/logical_vol2      /opt/mount2     ext4    defaults        0 0
+[exam@vm1-headnode ~]$ sudo blkid
+/dev/sda1: UUID="5b0fccd1-eb0d-49c7-95be-477b59cb6a05" TYPE="xfs"
+/dev/sda2: UUID="XIk7qD-oq0f-cGh0-OoPf-oifA-NIYd-eGXtoi" TYPE="LVM2_member"
+/dev/sdc1: UUID="RO9Ou0-YWlG-odYz-gwyh-8Bsx-7lkz-fyoWWz" TYPE="LVM2_member"
+/dev/sdb1: UUID="K8eJnm-NNlV-FhQA-BPI3-5nW9-LeqU-tX2Y7V" TYPE="LVM2_member"
+/dev/mapper/centos-root: UUID="efa1e9aa-a1c9-400c-b795-9ee550a984de" TYPE="xfs"
+/dev/mapper/centos-swap: UUID="c6aa38d4-d6c5-407b-82a0-1fd94c1cf6cd" TYPE="swap"
+/dev/mapper/vol_grp1-logical_vol1: UUID="05a7a4d8-e154-4641-a9b9-ff600048bc9a" TYPE="ext4"
+/dev/mapper/vol_grp2-logical_vol2: UUID="244d52fd-2f58-42d8-842a-0ff1ce7e943e" TYPE="ext4"
+Теперь можно редактировать файл «/etc/fstab».
+UUID="05a7a4d8-e154-4641-a9b9-ff600048bc9a"     /opt/mount1     ext4    defaults        0 0
+UUID="244d52fd-2f58-42d8-842a-0ff1ce7e943e"      /opt/mount2     ext4    defaults        0 0
 ```
 > И проверяем результат.
 ```bash
 [exam@vm1-headnode ~]$ reboot
-```
-> After some time.
-```bash
+~~~~~~~~~~~~~~~~~
+After some time.
+~~~~~~~~~~~~~~~~~
 [exam@vm1-headnode ~]$ lsblk
 NAME                      MAJ:MIN RM   SIZE RO TYPE MOUNTPOINT
 sda                         8:0    0   208G  0 disk
@@ -516,6 +526,7 @@ sdc                         8:32   0     5G  0 disk
 sr0                        11:0    1  1024M  0 rom
 ```
 > Монтирование не слетело.
+
 ```bash
 [exam@vm1-headnode ~]$ df -h /opt/mount1
 Filesystem                         Size  Used Avail Use% Mounted on
