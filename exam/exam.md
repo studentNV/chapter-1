@@ -866,7 +866,12 @@ export HADOOP_OS_TYPE=${HADOOP_OS_TYPE:-$(uname -s)}
 ```
 > Проверяем результат.
 ```bash
-[exam@vm1-headnode point23]$ cat yarn-site.xml |grep " <value>" | tail -2
+[exam@vm1-headnode ~]$ cat yarn-site.xml |grep " <value>" | head
+        <value>false</value>
+        <value>vm1-headnode</value>
+        <value>128</value>
+        <value>256</value>
+        <value>256</value>
         <value>/opt/mount1/nodemanager-local-dir,/opt/mount2/nodemanager-local-dir</value>
         <value>/opt/mount1/nodemanager-log-dir,/opt/mount2/nodemanager-log-dir</value>
 ```
