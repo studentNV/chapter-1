@@ -32,6 +32,7 @@
 > На самих виртуальных машинах задаём статический ip-адрес:
 > - vm1-headnode	192.168.100.11
 > - vm2-worker 		192.168.100.12
+> 
 > После этого производим перезагрузку системы.
 > Далее для того что бы каждый раз не вводить пароль при использовании `sudo` произведём следующие манипуляции. С помощью команды `sudo visudo` редактируем файл `/etc/sudoers` добавляя строчку. 
 ```bash
@@ -48,7 +49,7 @@ exam    ALL=(ALL)       NOPASSWD: ALL
 #### Скачать архив с Hadoop версии 3.1.2 (https://hadoop.apache.org/release/3.1.2.html)
 > Для удобства создаём папку и уже в неё скачиваю архив, так же перед этим скачиваем и устанавливаем утилиту `wget`.
 ```bash
-[exam@vm1-headnode point4]$ sudo yum install wget -y
+[exam@vm1-headnode ~]$ sudo yum install wget -y
 [exam@vm1-headnode ~]$ mkdir point4
 [exam@vm1-headnode ~]$ cd point4/
 [exam@vm1-headnode point4]$ wget https://archive.apache.org/dist/hadoop/common/hadoop-3.1.2/hadoop-3.1.2.tar.gz
@@ -70,7 +71,7 @@ drwxr-xr-x. 9 1001 1002 149 Jan 29  2019 hadoop-3.1.2
 #### Сделать симлинк `/usr/local/hadoop/current/` на директорию `/opt/hadoop-3.1.2/`
 > Создаем симлинк следующей командой.
 ```bash
-[exam@vm1-headnode hdfs]$ sudo ln -s /opt/hadoop-3.1.2/* /usr/local/hadoop/current/
+[exam@vm1-headnode ~]$ sudo ln -s /opt/hadoop-3.1.2/* /usr/local/hadoop/current/
 [exam@vm1-headnode ~]$ sudo ls -la /usr/local/hadoop/current
 total 0
 drwxr-xr-x. 2 root root 26 Jan 17 19:28 .
@@ -555,7 +556,7 @@ lost+found  namenode-dir
 > Данную директорию использует утилита `fsck`. Утилита `fsck` предназначена для проверки файловой системы.
 > Если утилита `fsck` в ходе проверки находит данные в файловой системе, которые повреждены или не имеют имени в системе («осиротевшие»), то такие файлы помещаются в директорию `lost+found`.
 > Например, если во время записи какого-либо файла на жесткий диск, вы внезапно выключите компьютер (например, выключите питание), то `fsck` сможет потом найти данный файл и поместит его в `lost+found`.
-## 16. Присвоение директориям пользователю `hdfs` и группе `hadoop` на `VM1`.
+## 16. Присвоение прав директориям для пользователя `hdfs` и группе `hadoop` на `VM1`.
 #### Сделать пользователя `hdfs` и группу `hadoop` владельцами этих директорий.
 > Перед присвоением посмотрим, как сейчас обстоят дела.
 ```bash
@@ -609,9 +610,9 @@ datanode-dir  lost+found
 datanode-dir  lost+found
 [exam@vm2-worker ~]$
 ```
-## 18. Присвоение директориям пользователю `hdfs` и группе `hadoop` на `VM2`.
+## 18. Присвоение прав директориям для пользователя `hdfs` и группе `hadoop` на `VM2`.
 #### Сделать пользователя `hdfs` и группу `hadoop` владельцами директорий из `п.17`.
-#### Пользователь `hdfs` был создан на `7` этапе. И перед присваением посмотрим, как сейчас обстоят дела.
+> Перед присваением прав посмотрим, как сейчас обстоят дела.
 ```bash
 [exam@vm2-worker ~]$ ls -l /opt/mount1 /opt/mount2
 /opt/mount1:
@@ -679,9 +680,9 @@ drwx------. 2 root root   16384 Jan 15 18:21 lost+found
 drwxr-xr-x. 2 root root    4096 Jan 16 13:54 nodemanager-local-dir
 drwxr-xr-x. 2 root root    4096 Jan 16 13:54 nodemanager-log-dir
 ```
-## 20. Присвоение директориям пользователю `yarn` и группе `hadoop` на `VM2`.
+## 20. Присвоение прав директориям для пользователя `yarn` и группе `hadoop` на `VM2`.
 #### Сделать пользователя `yarn` и группу `hadoop` владельцами директорий из `п.19`.
-> Смотрим какие права присвоены на данным директориям.
+> Смотрим какие права присвоены данным директориям.
 ```bash
 [exam@vm2-worker ~]$ ls -l /opt/mount1 /opt/mount1
 /opt/mount1:
@@ -719,9 +720,9 @@ drwx------. 2 root root   16384 Jan 15 18:21 lost+found
 drwxr-xr-x. 5 yarn hadoop  4096 Jan 17 19:35 nodemanager-local-dir
 drwxr-xr-x. 2 yarn hadoop  4096 Jan 17 19:35 nodemanager-log-dir
 ```
-# Для обеих машин `VM`1 и `VM2`:
+# Для обеих машин `VM1` и `VM2`:
 ## 21. Настроить доступ по `SSH` для пользователя `hadoop` с ключом
-####Настроить доступ по `SSH`, используя ключи для пользователя `hadoop`.
+#### Настроить доступ по `SSH`, используя ключи для пользователя `hadoop`.
 > Начнем с настройки ПК с которого будем подключаться и на котором будет лежать наш приватный ключ у меня это `Ubuntu` на ней необходимо произвести пару настроек, во-первых, выбрать в настройках `Oracle Virtual Box` сетевой мост, как и на всех остальных виртуальных машинах.
 
 ![image](https://user-images.githubusercontent.com/95025513/150647670-ea27ec0d-2a73-468a-8521-cc3502ad6ef2.png)
@@ -888,8 +889,11 @@ ERROR: Unable to create /usr/local/hadoop/current/hadoop-3.1.2/logs. Aborting.
 > Как я понял необходимо предоставить права. Прописываем права, но так как мы видим, что будет создавать папка то сразу её создаем (так как если не создать появиться другая ошибка при запуске далее) что бы те права, которые мы пропишем распространялись и на неё тоже.
 ```bash
 [exam@vm1-headnode ~]$ sudo mkdir /opt/hadoop-3.1.2/hadoop-3.1.2/logs
-[exam@vm1-headnode ~]$ sudo chown -R :hadoop /opt/hadoop-3.1.2/hadoop-3.1.2/
-[exam@vm1-headnode ~]$ sudo chmod -R g+wxr /opt/hadoop-3.1.2/hadoop-3.1.2/ Теперь пробуем снова.
+[exam@vm1-headnode ~]$ sudo chown -R :hadoop /opt/hadoop-3.1.2/hadoop-3.1.2/logs
+[exam@vm1-headnode ~]$ sudo chmod -R g+wxr /opt/hadoop-3.1.2/hadoop-3.1.2/logs
+```
+> Теперь пробуем снова.
+```bash
 [exam@vm1-headnode ~]$  sudo su -l hdfs -c "$HADOOP_HOME/bin/hdfs namenode -format cluster1"
 2022-01-17 19:36:14,826 INFO namenode.NameNode: STARTUP_MSG:
 /************************************************************
@@ -923,8 +927,8 @@ STARTUP_MSG:   version = 3.1.2
 > Так как при попытке запустить `datanode` выводиться та же ошибка что была на первой виртуальной машине произведём те же действия по предоставлению прав.
 ```bash
 [exam@vm2-worker ~]$ sudo mkdir /opt/hadoop-3.1.2/hadoop-3.1.2/logs
-[exam@vm2-worker ~]$ sudo chown -R :hadoop /opt/hadoop-3.1.2/hadoop-3.1.2/
-[exam@vm2-worker ~]$ sudo chmod -R g+wxr /opt/hadoop-3.1.2/hadoop-3.1.2/
+[exam@vm2-worker ~]$ sudo chown -R :hadoop /opt/hadoop-3.1.2/hadoop-3.1.2/logs
+[exam@vm2-worker ~]$ sudo chmod -R g+wxr /opt/hadoop-3.1.2/hadoop-3.1.2/logs
 ```
 > Запускаем `datanode` от пользователя `hdfs`.
 ```bash
