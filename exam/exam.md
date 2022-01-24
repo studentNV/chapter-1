@@ -886,7 +886,7 @@ WARNING: /usr/local/hadoop/current/hadoop-3.1.2/logs does not exist. Creating.
 mkdir: cannot create directory ‘/usr/local/hadoop/current/hadoop-3.1.2/logs’: Permission denied
 ERROR: Unable to create /usr/local/hadoop/current/hadoop-3.1.2/logs. Aborting. 
 ```
-> Как я понял необходимо предоставить права. Прописываем права, но так как мы видим, что будет создавать папка то сразу её создаем (так как если не создать появиться другая ошибка при запуске далее) что бы те права, которые мы пропишем распространялись и на неё тоже.
+> Как я понял необходимо предоставить права. Прописываем права, но так как мы видим, что будет создаваться папка то сразу её создаем (так как если не создать появиться другая ошибка при запуске далее) что бы те права, которые мы пропишем распространялись и на неё тоже.
 ```bash
 [exam@vm1-headnode ~]$ sudo mkdir /opt/hadoop-3.1.2/hadoop-3.1.2/logs
 [exam@vm1-headnode ~]$ sudo chown -R :hadoop /opt/hadoop-3.1.2/hadoop-3.1.2/logs
