@@ -149,28 +149,13 @@ public (active)
 running
 [root@localhost ~]# firewall-cmd --zone=public --permanent --remove-service=ssh
 success
-[root@localhost ~]# firewall-cmd --zone=internal --add-source=192.168.56.0/24 --permanent
+[root@localhost ~]# sudo firewall-cmd --permanent --zone=public --add-rich-rule='rule family=ipv4 source address=192.168.56.0/24 port port=22 protocol=tcp accept'
 success
-[root@localhost ~]# firewall-cmd --zone=internal --change-interface=enp0s8 --permanent
-The interface is under control of NetworkManager, setting zone to 'home'.
+[root@localhost ~]# sudo firewall-cmd --reload
 success
-[root@localhost ~]# firewall-cmd --reload
+[root@localhost ~]# sudo firewall-cmd --runtime-to-permanent
 success
-[root@localhost ~]#firewall-cmd --list-all --zone=internal
-internal (active)
-  target: default
-  icmp-block-inversion: no
-  interfaces: enp0s8
-  sources: 192.168.56.0/24
-  services: dhcpv6-client mdns samba-client ssh
-  ports:
-  protocols:
-  masquerade: no
-  forward-ports:
-  source-ports:
-  icmp-blocks:
-  rich rules:
-[root@localhost ~]#firewall-cmd --list-all --zone=public
+[root@localhost ~]# sudo firewall-cmd --list-all
 public (active)
   target: default
   icmp-block-inversion: no
@@ -184,6 +169,8 @@ public (active)
   source-ports:
   icmp-blocks:
   rich rules:
+        rule family="ipv4" source address="192.168.56.0/24" port port="22" protocol="tcp" accept
+
 ```
 #### 2. Shutdown firewalld and add the same rules via iptables.
 ```bash
