@@ -203,24 +203,16 @@ Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
 
 Chain OUTPUT (policy ACCEPT 6 packets, 1328 bytes)
  pkts bytes target     prot opt in     out     source               destination
-[root@localhost ~]# sudo iptables -P INPUT DROP
-[root@localhost ~]# sudo iptables -A INPUT -i enp0s8 -s 192.168.0.0/24 -j ACCEPT
-[root@localhost ~]# iptables -L -n -v
-Chain INPUT (policy DROP 0 packets, 0 bytes)
+[root@localhost ~]# iptables -D INPUT 1
+[root@localhost ~]# sudo iptables -A INPUT -i enp0s3  -s 192.168.100.0/24 -j ACCEPT
+[root@localhost ~]# sudo iptables -A INPUT -j REJECT 
+[root@localhost ~]#  sudo iptables -L -n -v | head -n 5
+Chain INPUT (policy ACCEPT 0 packets, 0 bytes)
  pkts bytes target     prot opt in     out     source               destination
-   25  1812 ACCEPT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            state RELATED,ESTABLISHED
-    0     0 ACCEPT     icmp --  *      *       0.0.0.0/0            0.0.0.0/0
-    0     0 ACCEPT     all  --  lo     *       0.0.0.0/0            0.0.0.0/0
-    0     0 ACCEPT     tcp  --  *      *       0.0.0.0/0            0.0.0.0/0            state NEW tcp dpt:22
-   50 14550 REJECT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            reject-with icmp-host-prohibited
-    0     0 ACCEPT     all  --  enp0s8 *       192.168.0.0/24       0.0.0.0/0
+  556  136K ACCEPT     all  --  enp0s3 *       192.168.100.0/24     0.0.0.0/0
+    2   104 REJECT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            reject-with icmp-port-unreachable
 
-Chain FORWARD (policy ACCEPT 0 packets, 0 bytes)
- pkts bytes target     prot opt in     out     source               destination
-    0     0 REJECT     all  --  *      *       0.0.0.0/0            0.0.0.0/0            reject-with icmp-host-prohibited
-
-Chain OUTPUT (policy ACCEPT 3 packets, 320 bytes)
- pkts bytes target     prot opt in     out     source               destination
+sudo nmcli con mod enp0s8 ipv4.method manual ipv4.addresses "192.168.56.103/24,192.168.56.104/24"
 [root@localhost ~]# /sbin/service iptables save
 iptables: Saving firewall rules to /etc/sysconfig/iptables:[  OK  ]
 ```
